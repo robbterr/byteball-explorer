@@ -146,6 +146,12 @@ function createCy() {
 				}
 			},
 			{
+				selector: '.is_witness',
+				style: {
+					'background-color': 'orange',
+				}
+			},
+			{
 				selector: '.finalBad',
 				style: {
 					'background-color': 'red'
@@ -233,6 +239,7 @@ function generate(_nodes, _edges) {
 			classes = '';
 			if (_node.is_on_main_chain) classes += 'is_on_main_chain ';
 			if (_node.is_stable) classes += 'is_stable ';
+			if (_node.is_witness) classes += 'is_witness ';
 			if (_node.sequence === 'final-bad') classes += 'finalBad';
 			if (_node.sequence === 'temp-bad') classes += 'tempBad';
 			if (!first) {
@@ -272,7 +279,6 @@ function generate(_nodes, _edges) {
 	updListNotStableUnit();
 	updateScrollHeigth();
 }
-
 
 function animationPanUp(distance) {
 	if (animationPlaysPanUp) {
@@ -326,6 +332,7 @@ function setNew(_nodes, _edges, newUnits) {
 			classes = '';
 			if (_node.is_on_main_chain) classes += 'is_on_main_chain ';
 			if (_node.is_stable) classes += 'is_stable ';
+			if (_node.is_witness) classes += 'is_witness ';
 			if (_node.sequence === 'final-bad') classes += 'finalBad';
 			if (_node.sequence === 'temp-bad') classes += 'tempBad';
 			if (!first) {
@@ -383,6 +390,7 @@ function createGraph(_nodes, _edges) {
 			height: 32,
 			is_on_main_chain: node.is_on_main_chain,
 			is_stable: node.is_stable,
+			is_witness: node.is_witness,
 			sequence: node.sequence
 		});
 	});

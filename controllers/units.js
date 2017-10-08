@@ -6,6 +6,38 @@ var storage = require('byteballcore/storage.js');
 var moment = require('moment');
 var async = require('async');
 
+function add_isWitness(nodes, cb) {
+
+		async.each(nodes, function(node, callback) {
+
+			// all authors of the unit
+			db.query("SELECT * FROM unit_authors WHERE unit_authors.unit = ?", [node.data.unit], function(rows) {
+
+				var found = true; 
+
+				// check if all authers are witnesses
+				async.each(rows, function(row, callback2) {
+
+					storage.readWitnesses(db, node.data.unit, function(arrWitnesses) {
+
+						if( arrWitnesses.indexOf(row.address) < 0 ) found = false;
+						callback2();
+
+					});
+
+				}, function() {
+					node.is_witness = found;
+					callback();
+				});
+
+			});
+
+		}, function() {
+			cb(nodes);
+		});
+
+}
+
 function getLastUnits(cb) {
 	var nodes = [];
 	var edges = {};
@@ -29,7 +61,11 @@ function getLastUnits(cb) {
 				best_parent_unit: row.parent_unit == row.best_parent_unit
 			};
 		});
-		cb(nodes, edges);
+
+		add_isWitness(nodes, function(nodes_new) {
+			cb(nodes_new, edges);
+		});
+
 	});
 }
 
@@ -63,7 +99,11 @@ function getUnitsBeforeRowid(rowid, limit, cb) {
 						best_parent_unit: row.parent_unit == row.best_parent_unit
 					};
 				});
-				cb(nodes, edges);
+
+				add_isWitness(nodes, function(nodes_new) {
+					cb(nodes_new, edges);
+				});
+
 			});
 		}
 		else {
@@ -113,7 +153,11 @@ function getUnitsAfterRowid(rowid, limit, cb) {
 						best_parent_unit: row.parent_unit == row.best_parent_unit
 					};
 				});
-				cb(nodes, edges);
+
+				add_isWitness(nodes, function(nodes_new) {
+					cb(nodes_new, edges);
+				});
+
 			});
 		}
 		else {
